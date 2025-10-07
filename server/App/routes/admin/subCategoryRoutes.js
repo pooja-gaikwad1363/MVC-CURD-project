@@ -26,6 +26,6 @@ subCategoryRoutes.delete('/delete/:id', subCategoryDelete);
 subCategoryRoutes.post('/multydelete/', subCategorymultyDelete);
 subCategoryRoutes.post('/change-status/', statusUpdate);
 subCategoryRoutes.get('/edit-subCategory/:id', subCategoryEdit);
-subCategoryRoutes.put('/update/:id',subCategoryUpdate)
-subCategoryRoutes.get('/parent-category',upload.single('subCategoryImage'),parentCategory)
+subCategoryRoutes.put('/update/:id',upload.single('subCategoryImage'),subCategoryUpdate)
+subCategoryRoutes.get('/parent-category',parentCategory)
 module.exports = subCategoryRoutes;

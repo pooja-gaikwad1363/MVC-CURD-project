@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const categoryModel = require("../../models/categoryModel");
 const subCategoryModel = require("../../models/subCategoryModel");
 
@@ -67,6 +68,7 @@ limit= req.query.limit;
 
 let subCategoryEdit = async (req, res) => {
   let { id } = req.params;
+  
   let subCategoryData = await subCategoryModel.findOne({ _id: id });
   let obj = {
     status: 1,
@@ -132,6 +134,7 @@ let statusUpdate = async (req, res) => {
         subCategoryStatus: {
           $not: "$subCategoryStatus",
         },
+      
       },
     },
   ]);
@@ -142,27 +145,67 @@ let statusUpdate = async (req, res) => {
   };
   res.send(obj);
 };
-
 let subCategoryUpdate = async (req, res) => {
-  let obj;
   let { id } = req.params;
+  let updateobj = { ...req.body };
+
+  console.log("=== UPDATE DEBUG LOGS ===");
+  console.log("ID:", id);
+  console.log("Valid ID?", mongoose.Types.ObjectId.isValid(id));
+  console.log("BODY:", req.body);
+  console.log("FILE:", req.file);
+
+  if (req.file?.filename) {
+    updateobj["subCategoryImage"] = req.file.filename;
+  }
 
   try {
-    let updateRes = await subCategoryModel.updateOne({ _id: id }, { $set: req.body });
-    obj = {
+    let updateRes = await subCategoryModel.updateOne({ _id: id }, { $set: updateobj });
+    console.log("Update Result:", updateRes);
+
+    res.send({
       status: 1,
       msg: "subCategory updated successfully",
       updateRes,
-    };
-    res.send(obj);
+    });
   } catch (err) {
-    obj = {
+    console.error("ERROR in update:", err);
+    res.status(500).send({
       status: 0,
-      err,
-    };
-    res.send(obj);
+      msg: "Error updating subCategory",
+      err: err.message,
+    });
   }
 };
+
+
+// let subCategoryUpdate = async (req, res) => {
+//     console.log("Updating ID:", id, "isValid?", mongoose.Types.ObjectId.isValid(id));
+
+//   let { id } = req.params;
+// let updateobj={...req.body}
+// if(req.file){
+//   if(req.file.filename){
+//     updateobj['subCategoryImage']=req.file.filename
+//   }
+// }
+// let obj;
+//   try {
+//     let updateRes = await subCategoryModel.updateOne({ _id: id }, { $set:updateobj});
+//     obj = {
+//       status: 1,
+//       msg: "subCategory updated successfully",
+//       updateRes,
+//     };
+//     res.send(obj);
+//   } catch (err) {
+//     obj = {
+//       status: 0,
+//       err,
+//     };
+//     res.send(obj);
+//   }
+// };
 let parentCategory= async(req,res)=>{
   let categoryData= await categoryModel.find({categoryStatus:true}).select('categoryName');
   
